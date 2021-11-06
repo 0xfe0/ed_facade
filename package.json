@@ -1,0 +1,19 @@
+{
+  "name": "ed_facade",
+  "version": "1.0.0",
+  "description": "Login API and more.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xfe0/ed_facade.git"
+  },
+  "author": "Ayush",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/0xfe0/ed_facade/issues"
+  },
+  "homepage": "https://github.com/0xfe0/ed_facade#readme"
+}
