@@ -26,8 +26,11 @@ if(!(config.isProduction)) {
     app.use(errorHandler());
 }
 
-//routes
+//set up auth
+require('./src/auth/setUpAuth.js').setUpAuth(app);
 
+//routes
+app.use(require('./src/authRoutes'));
 /////////////////////////
 
 //Error handlers & middlewares
@@ -55,4 +58,4 @@ if(!(config.isProduction)) {
     });
 });
 
-app.listen(8000, () => console.log('Server running on http://localhost:8000/'));
+app.listen(7789, () => console.log('Server running on http://localhost:7789/'));
