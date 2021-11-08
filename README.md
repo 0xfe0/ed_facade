@@ -2,4 +2,4 @@
 Simple Login API and more
 
 ## Docs
-Under construction
+http://thepsychedelics.club:7789/docs/
