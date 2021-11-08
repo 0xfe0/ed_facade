@@ -19,10 +19,6 @@ const UsersSchema = new Schema({
     type: String,
     trim: true
 },
-role: {
-    type: String,
-    enum: ['Admin', 'User'],
-},
   passwordHash: String,
   passwordSalt: String,
 });

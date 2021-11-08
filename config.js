@@ -23,7 +23,6 @@ Users.countDocuments()
             email: "admin@thepsychedelics.club",
             firstName: "Ayush",
             lastName: "Bhat",
-            role: "Admin",
         });
 
         newUser.setPassword("psych@123");

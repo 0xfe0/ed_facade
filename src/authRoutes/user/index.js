@@ -4,8 +4,6 @@ const router = require('express').Router();
 const auth = require('../../auth/auth.js');
 const Users = mongoose.model('Users');
 
-// router.use('/admin', require('./admin'));
-
 
 function validateEmail(email) {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -14,9 +12,9 @@ function validateEmail(email) {
 
 
 /**
- * @api {post} /user NewUser
+ * @api {post} /user/register NewUser
  * @apiName Create's New User
- * @apiPermission Users
+ * @apiPermission Admin
  * @apiGroup User
  *
  * @apiParam {String} email Users email ID.
@@ -32,7 +30,7 @@ function validateEmail(email) {
  * @apiError NotAdmin The You are not supposed to do this.
  *
  */
-router.post('/', auth.required, (req, res, next) => {
+router.post('/register', auth.none, (req, res, next) => {
   let user = {};
   user.email = req.query.email;
   user.password = req.query.password;
@@ -62,8 +60,6 @@ router.post('/', auth.required, (req, res, next) => {
       },
     });
   }
-
-  user.role = "User";
 
   const finalUser = new Users(user);
 
@@ -168,7 +164,7 @@ router.post('/', auth.required, (req, res, next) => {
 
 
 /**
- * @api {get} /user/current CurrentUser
+ * @api {get} /user CurrentUser
  * @apiName Gets current user data
  * @apiPermission Users Admins
  * @apiGroup User
@@ -176,7 +172,7 @@ router.post('/', auth.required, (req, res, next) => {
  * @apiSuccess User User object will be returned.
  * 
  */
-router.get('/current', auth.required, (req, res, next) => {
+router.get('/', auth.required, (req, res, next) => {
   return res.json({ user: req.user });
 });
 

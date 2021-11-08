@@ -1,28 +1,30 @@
 let passport = require('passport')
 let LocalStrategy = require('passport-local').Strategy;
-const { Users } = require('../models/User')
 
 
 //import the model
-const { User } = require('../models/User.js')
+const { Users } = require('../models/User')
 
 module.exports.setUpAuth = (app) => {
   app.use(passport.initialize());
   app.use(passport.session());
+
   passport.serializeUser(function(user, done) {
     done(null, user._id);
   });
   
   passport.deserializeUser( async function(userId, done) {
-    Users.findById(userId, function(err, user) {
+    try {
+      let user = await Users.findById(userId);
       let res_to_return = {}
       res_to_return._id = user._id;
       res_to_return.email = user.email;
       res_to_return.firstName = user.firstName;
       res_to_return.lastName = user.lastName;
-      res_to_return.role = user.role;
-        done(err, res_to_return);
-    });    
+      done(null, res_to_return);
+    } catch (err) {
+      done(err, null)
+    }
   });
 
   passport.use(new LocalStrategy(
@@ -33,24 +35,24 @@ module.exports.setUpAuth = (app) => {
     function(username, password, done) {
         Users.findOne({email: username})
         .then((res) => {
+          console.log(res);
             if(!res) {
-                return done(null, false, { message: 'Incorrect username.' });
+                return done("incorrent username", false);
             } else {
                 if(!res.validatePassword(password)) {
-                    return done(null, false, { message: 'Incorrect password.' });
+                    return done("incorrent password", false);
                 } else {
                   let res_to_return = {}
                   res_to_return._id = res._id;
                   res_to_return.email = res.email;
                   res_to_return.firstName = res.firstName;
                   res_to_return.lastName = res.lastName;
-                  res_to_return.role = res.role;
                   done(null, res_to_return);
                 }
             }
         })
         .catch((err) => {
-            return done(err, false, { message: 'Something went wrong' });
+            return done(err, false);
         });
     }
   ));
@@ -67,7 +69,6 @@ module.exports.setUpAuth = (app) => {
  * @apiSuccess {String} email  Email of the User.
  * @apiSuccess {String} firstname Firstname of the User.
  * @apiSuccess {String} lastname  Lastname of the User.
- * @apiSuccess {String} role  Role of the User.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -75,7 +76,6 @@ module.exports.setUpAuth = (app) => {
  *       "email": "email@examp.com",
  *       "firstName": "John",
  *       "lastName": "Doe",
- *       "role": "Admin"
  *     }
  *
  * @apiError UserNotFound The <code>email</code> of the User was not found.
@@ -83,9 +83,9 @@ module.exports.setUpAuth = (app) => {
  */
   app.post("/login", function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
-      if (err) { return next(err); }
-
-      if (!user) { return res.status(422).json({errors: {NoUser: "Invalid Username or Password!"}}); }
+      if (err) { 
+        return res.status(422).json({error: err});
+      }
 
       req.logIn(user, function(err) {
 
@@ -108,7 +108,7 @@ module.exports.setUpAuth = (app) => {
 });
 
 /**
- * @api {post} /logout Logout
+ * @api {get} /logout Logout
  * @apiName Logout current session
  * @apiGroup Session
  *

@@ -3,6 +3,7 @@ var session = require('express-session')
 let cors = require('cors')
 const MongoStore = require('connect-mongo');
 const errorHandler = require('errorhandler');
+const path = require('path')
 
 //get the config
 let config = require("./config.js");
@@ -31,6 +32,8 @@ require('./src/auth/setUpAuth.js').setUpAuth(app);
 
 //routes
 app.use(require('./src/authRoutes'));
+app.use(require('./src/routes'));
+app.use('/docs', express.static(path.join(__dirname, 'apidoc')));
 /////////////////////////
 
 //Error handlers & middlewares
